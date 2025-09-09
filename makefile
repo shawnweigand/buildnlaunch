@@ -1,6 +1,6 @@
 # Define variables
 DOCKER_COMPOSE = docker-compose
-APP_CONTAINER = app  # Change this to the name of your app container
+APP_CONTAINER = buildnlaunch_app  # Change this to the name of your app container
 SHELL_COMMAND = /bin/bash  # Or /bin/sh, depending on your container
 
 .PHONY: up exec run install secrets setup
