@@ -31,8 +31,8 @@ services:
       - buildnlaunch_app
     depends_on:
       - vite
-      - pgsql
-      - redis
+      # - pgsql
+      # - redis
 
   vite:
     container_name: buildnlaunch_vite
@@ -51,36 +51,36 @@ services:
     networks:
       - buildnlaunch_app
 
-  pgsql:
-    container_name: buildnlaunch_pgsql
-    image: postgres:17
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: buildnlaunch
-    volumes:
-      - buildnlaunch_pgsql_data:/var/lib/pgsql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - buildnlaunch_app
+  # pgsql:
+  #   container_name: buildnlaunch_pgsql
+  #   image: postgres:17
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: buildnlaunch
+  #   volumes:
+  #     - buildnlaunch_pgsql_data:/var/lib/pgsql/data
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - buildnlaunch_app
 
-  redis:
-    container_name: buildnlaunch_redis
-    image: redis:latest
-    restart: always
-    ports:
-      - "6379:6379"
-    networks:
-      - buildnlaunch_app
-    volumes:
-        - buildnlaunch_redis_data:/data
+  # redis:
+  #   container_name: buildnlaunch_redis
+  #   image: redis:latest
+  #   restart: always
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - buildnlaunch_app
+  #   volumes:
+  #       - buildnlaunch_redis_data:/data
 
 networks:
   buildnlaunch_app:
     driver: bridge
 
 volumes:
-  buildnlaunch_pgsql_data:
-  buildnlaunch_redis_data:
+  # buildnlaunch_pgsql_data:
+  # buildnlaunch_redis_data:
