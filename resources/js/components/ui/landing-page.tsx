@@ -165,7 +165,7 @@ export function DesignAgency() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 overflow-hidden">
-          <div className="container px-4 md:px-6 border border-muted rounded-3xl bg-gradient-to-br from-background to-muted/30 mx-auto">
+          <div className="container px-4 md:px-6 rounded-3xl mx-auto">
             <div className="grid gap-3 lg:grid-cols-[1fr_400px] lg:gap-3 xl:grid-cols-[1fr_600px]">
               <motion.div
                 initial="hidden"
@@ -325,7 +325,7 @@ export function DesignAgency() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            className="container px-4 md:px-6 border border-muted rounded-3xl bg-gradient-to-br from-background to-muted/30 mx-auto"
+            className="container px-4 md:px-6 rounded-3xl mx-auto"
           >
             <div className="flex flex-col items-center justify-center space-y-4 text-center py-10">
               <div className="space-y-3">
@@ -527,7 +527,7 @@ export function DesignAgency() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            className="container px-4 md:px-6 border border-muted rounded-3xl mx-auto"
+            className="container px-4 md:px-6 rounded-3xl mx-auto"
           >
             <div className="flex flex-col items-center justify-center space-y-4 text-center py-10">
               <div className="space-y-3">
@@ -633,7 +633,7 @@ export function DesignAgency() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            className="container px-4 md:px-6 border border-muted rounded-3xl bg-gradient-to-br from-background to-muted/30 mx-auto"
+            className="container px-4 md:px-6 rounded-3xl mx-auto"
           >
             <div className="text-center space-y-4 mb-12 py-10">
               <motion.div
