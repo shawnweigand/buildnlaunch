@@ -1,13 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Link } from "@inertiajs/react"
 import { motion } from "framer-motion"
 import {
-  Menu,
-  X,
   ArrowRight,
-  ChevronRight,
   Mail,
   MapPin,
   Phone,
@@ -23,10 +19,20 @@ import {
   Code,
   LineChart,
   MessageSquare,
+  Check,
+  Star,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { cn } from "@/lib/utils"
+import { useState, useRef } from "react"
+// @ts-ignore
+import confetti from "canvas-confetti"
+import { smoothScrollToElement } from "@/lib/smooth-scroll"
 
 // Animation variants
 const fadeIn = {
@@ -57,130 +63,105 @@ const itemFadeIn = {
   },
 }
 
+const demoPlans = [
+  {
+    name: "STARTER",
+    price: "50",
+    yearlyPrice: "40",
+    period: "per month",
+    features: [
+      "Up to 10 projects",
+      "Basic analytics",
+      "48-hour support response time",
+      "Limited API access",
+      "Community support",
+    ],
+    description: "Perfect for individuals and small projects",
+    buttonText: "Start Free Trial",
+    href: "/sign-up",
+    isPopular: false,
+  },
+  {
+    name: "PROFESSIONAL",
+    price: "99",
+    yearlyPrice: "79",
+    period: "per month",
+    features: [
+      "Unlimited projects",
+      "Advanced analytics",
+      "24-hour support response time",
+      "Full API access",
+      "Priority support",
+      "Team collaboration",
+      "Custom integrations",
+    ],
+    description: "Ideal for growing teams and businesses",
+    buttonText: "Get Started",
+    href: "/sign-up",
+    isPopular: true,
+  },
+  {
+    name: "ENTERPRISE",
+    price: "299",
+    yearlyPrice: "239",
+    period: "per month",
+    features: [
+      "Everything in Professional",
+      "Custom solutions",
+      "Dedicated account manager",
+      "1-hour support response time",
+      "SSO Authentication",
+      "Advanced security",
+      "Custom contracts",
+      "SLA agreement",
+    ],
+    description: "For large organizations with specific needs",
+    buttonText: "Contact Sales",
+    href: "/contact",
+    isPopular: false,
+  },
+];
+
 export function DesignAgency() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
+  const [isMonthly, setIsMonthly] = useState(true);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const switchRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY)
+  const handleToggle = (checked: boolean) => {
+    setIsMonthly(!checked);
+    if (checked && switchRef.current) {
+      const rect = switchRef.current.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: {
+          x: x / window.innerWidth,
+          y: y / window.innerHeight,
+        },
+        colors: [
+          "hsl(var(--primary))",
+          "hsl(var(--accent))",
+          "hsl(var(--secondary))",
+          "hsl(var(--muted))",
+        ],
+        ticks: 200,
+        gravity: 1.2,
+        decay: 0.94,
+        startVelocity: 30,
+        shapes: ["circle"],
+      });
     }
+  };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+  const handleSmoothScroll = (elementId: string) => {
+    smoothScrollToElement(elementId, { offset: 100 });
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-muted/20 w-full overflow-x-hidden">
-      {/* Header */}
-      <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${scrollY > 50 ? "shadow-md" : ""}`}
-      >
-        <div className="container flex h-16 items-center justify-between border-b border-muted mx-auto">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center space-x-3">
-              <motion.div
-                whileHover={{ rotate: 5, scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                className="h-10 w-10 rounded-3xl bg-primary flex items-center justify-center"
-              >
-                <Sparkles className="h-5 w-5 text-primary-foreground" />
-              </motion.div>
-              <span className="font-bold text-xl">Studio</span>
-            </Link>
-          </div>
-          <nav className="hidden md:flex gap-3">
-            <Link href="#services" className="text-sm font-medium transition-colors hover:text-primary">
-              Services
-            </Link>
-            <Link href="#work" className="text-sm font-medium transition-colors hover:text-primary">
-              Work
-            </Link>
-            <Link href="#about" className="text-sm font-medium transition-colors hover:text-primary">
-              About
-            </Link>
-            <Link href="#clients" className="text-sm font-medium transition-colors hover:text-primary">
-              Clients
-            </Link>
-            <Link href="#contact" className="text-sm font-medium transition-colors hover:text-primary">
-              Contact
-            </Link>
-            <Link href="/pricing" className="text-sm font-medium transition-colors hover:text-primary">
-              Pricing
-            </Link>
-          </nav>
-          <div className="hidden md:flex items-center gap-3">
-            <Button variant="outline" size="sm" className="rounded-3xl">
-              Log In
-            </Button>
-            <Button size="sm" className="rounded-3xl">
-              Get Started
-            </Button>
-          </div>
-          <button className="flex md:hidden" onClick={toggleMenu}>
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Toggle menu</span>
-          </button>
-        </div>
-      </motion.header>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-background md:hidden"
-        >
-          <div className="container flex h-16 items-center justify-between mx-auto">
-            <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-3xl bg-primary flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-xl">Studio</span>
-              </Link>
-            </div>
-            <button onClick={toggleMenu}>
-              <X className="h-6 w-6" />
-              <span className="sr-only">Close menu</span>
-            </button>
-          </div>
-          <motion.nav
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            className="container grid gap-3 pb-8 pt-6 mx-auto"
-          >
-            {["Services", "Work", "About", "Clients", "Contact"].map((item, index) => (
-              <motion.div key={index} variants={itemFadeIn}>
-                <Link
-                  href={`#${item.toLowerCase()}`}
-                  className="flex items-center justify-between rounded-3xl px-3 py-2 text-lg font-medium hover:bg-accent"
-                  onClick={toggleMenu}
-                >
-                  {item}
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              </motion.div>
-            ))}
-            <motion.div variants={itemFadeIn} className="flex flex-col gap-3 pt-4">
-              <Button variant="outline" className="w-full rounded-3xl">
-                Log In
-              </Button>
-              <Button className="w-full rounded-3xl">Get Started</Button>
-            </motion.div>
-          </motion.nav>
-        </motion.div>
-      )}
-
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 overflow-hidden">
@@ -229,7 +210,11 @@ export function DesignAgency() {
                   transition={{ duration: 0.7, delay: 0.6 }}
                   className="flex flex-col gap-3 sm:flex-row"
                 >
-                  <Button size="lg" className="rounded-3xl group">
+                  <Button
+                    size="lg"
+                    className="rounded-3xl group"
+                    onClick={() => handleSmoothScroll('contact')}
+                  >
                     Get Started
                     <motion.span
                       initial={{ x: 0 }}
@@ -239,7 +224,12 @@ export function DesignAgency() {
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </motion.span>
                   </Button>
-                  <Button variant="outline" size="lg" className="rounded-3xl">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="rounded-3xl"
+                    onClick={() => handleSmoothScroll('work')}
+                  >
                     View Our Work
                   </Button>
                 </motion.div>
@@ -636,6 +626,162 @@ export function DesignAgency() {
           </motion.div>
         </section>
 
+        {/* Pricing Section */}
+        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="container px-4 md:px-6 border border-muted rounded-3xl bg-gradient-to-br from-background to-muted/30 mx-auto"
+          >
+            <div className="text-center space-y-4 mb-12 py-10">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="inline-block rounded-3xl bg-muted px-3 py-1 text-sm"
+              >
+                Pricing
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
+              >
+                Simple, Transparent Pricing
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
+              >
+                Choose the plan that works for you. All plans include access to our platform, lead generation tools, and dedicated support.
+              </motion.p>
+            </div>
+
+            <div className="flex justify-center mb-10">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <Label>
+                  <Switch
+                    ref={switchRef as any}
+                    checked={!isMonthly}
+                    onCheckedChange={handleToggle}
+                    className="relative"
+                  />
+                </Label>
+              </label>
+              <span className="ml-2 font-semibold">
+                Annual billing <span className="text-primary">(Save 20%)</span>
+              </span>
+            </div>
+
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-12"
+            >
+              {demoPlans.map((plan, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemFadeIn}
+                  initial={{ y: 50, opacity: 1 }}
+                  whileInView={
+                    isDesktop
+                      ? {
+                          y: plan.isPopular ? -20 : 0,
+                          opacity: 1,
+                          x: index === 2 ? -30 : index === 0 ? 30 : 0,
+                          scale: index === 0 || index === 2 ? 0.94 : 1.0,
+                        }
+                      : {}
+                  }
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 1.6,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 30,
+                    delay: 0.4,
+                    opacity: { duration: 0.5 },
+                  }}
+                  className={cn(
+                    `rounded-2xl border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative`,
+                    plan.isPopular ? "border-primary border-2" : "border-border",
+                    "flex flex-col",
+                    !plan.isPopular && "mt-5",
+                    index === 0 || index === 2
+                      ? "z-0 transform translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg]"
+                      : "z-10",
+                    index === 0 && "origin-right",
+                    index === 2 && "origin-left"
+                  )}
+                >
+                  {plan.isPopular && (
+                    <div className="absolute top-0 right-0 bg-primary py-0.5 px-2 rounded-bl-xl rounded-tr-xl flex items-center">
+                      <Star className="text-primary-foreground h-4 w-4 fill-current" />
+                      <span className="text-primary-foreground ml-1 font-sans font-semibold">
+                        Popular
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1 flex flex-col">
+                    <p className="text-base font-semibold text-muted-foreground">
+                      {plan.name}
+                    </p>
+                    <div className="mt-6 flex items-center justify-center gap-x-2">
+                      <span className="text-5xl font-bold tracking-tight text-foreground">
+                        ${isMonthly ? plan.price : plan.yearlyPrice}
+                      </span>
+                      {plan.period !== "Next 3 months" && (
+                        <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
+                          / {plan.period}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-xs leading-5 text-muted-foreground">
+                      {isMonthly ? "billed monthly" : "billed annually"}
+                    </p>
+
+                    <ul className="mt-5 gap-2 flex flex-col">
+                      {plan.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <Check className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                          <span className="text-left">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <hr className="w-full my-4" />
+
+                    <Link
+                      href={plan.href}
+                      className={cn(
+                        "inline-flex items-center justify-center rounded-3xl border px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+                        "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
+                        "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
+                        plan.isPopular
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-background text-foreground border-input"
+                      )}
+                    >
+                      {plan.buttonText}
+                    </Link>
+                    <p className="mt-6 text-xs leading-5 text-muted-foreground">
+                      {plan.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </section>
+
         {/* Contact Section */}
         <section id="contact" className="w-full py-12 md:py-24 lg:py-32">
           <motion.div
@@ -808,35 +954,59 @@ export function DesignAgency() {
             <div>
               <h3 className="text-lg font-medium">Company</h3>
               <nav className="mt-4 flex flex-col space-y-2 text-sm">
-                <Link href="#about" className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => handleSmoothScroll('about')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
                   About Us
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Careers
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Our Process
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  News & Press
-                </Link>
+                </button>
+                <button
+                  onClick={() => handleSmoothScroll('services')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
+                  Our Services
+                </button>
+                <button
+                  onClick={() => handleSmoothScroll('work')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
+                  Our Work
+                </button>
+                <button
+                  onClick={() => handleSmoothScroll('contact')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
+                  Contact Us
+                </button>
               </nav>
             </div>
             <div>
               <h3 className="text-lg font-medium">Services</h3>
               <nav className="mt-4 flex flex-col space-y-2 text-sm">
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => handleSmoothScroll('services')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
                   UI/UX Design
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                </button>
+                <button
+                  onClick={() => handleSmoothScroll('services')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
                   Web Development
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                </button>
+                <button
+                  onClick={() => handleSmoothScroll('services')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
                   Brand Identity
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                </button>
+                <button
+                  onClick={() => handleSmoothScroll('services')}
+                  className="text-muted-foreground hover:text-foreground text-left"
+                >
                   Digital Marketing
-                </Link>
+                </button>
               </nav>
             </div>
           </div>

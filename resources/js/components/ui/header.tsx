@@ -4,12 +4,16 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Menu, X, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Link } from "@inertiajs/react"
+import { Link, usePage } from "@inertiajs/react"
 import { route } from "ziggy-js"
+import { dashboard, login } from "@/routes"
+import { type SharedData } from "@/types"
+import { smoothScrollToElement } from "@/lib/smooth-scroll"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const { auth } = usePage<SharedData>().props
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +26,11 @@ export function Header() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
+  }
+
+  const handleSmoothScroll = (elementId: string) => {
+    smoothScrollToElement(elementId, { offset: 100 })
+    setIsMenuOpen(false) // Close mobile menu after clicking
   }
 
   return (
@@ -47,32 +56,29 @@ export function Header() {
             </Link>
           </div>
           <nav className="hidden md:flex gap-3">
-            <Link href={`${route('home')}#services`} className="text-sm font-medium transition-colors hover:text-primary">
-              Services
-            </Link>
-            <Link href={`${route('home')}#work`} className="text-sm font-medium transition-colors hover:text-primary">
-              Work
-            </Link>
-            <Link href={`${route('home')}#about`} className="text-sm font-medium transition-colors hover:text-primary">
-              About
-            </Link>
-            <Link href={`${route('home')}#clients`} className="text-sm font-medium transition-colors hover:text-primary">
-              Clients
-            </Link>
-            <Link href={`${route('home')}#contact`} className="text-sm font-medium transition-colors hover:text-primary">
-              Contact
-            </Link>
-            <Link href={route('pricing')} className="text-sm font-medium transition-colors hover:text-primary">
+            <button
+              onClick={() => handleSmoothScroll('pricing')}
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               Pricing
-            </Link>
+            </button>
           </nav>
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="outline" size="sm" className="rounded-3xl">
-              Log In
-            </Button>
-            <Button size="sm" className="rounded-3xl">
-              Get Started
-            </Button>
+            {auth.user ? (
+              <Link
+                href={dashboard()}
+                className="inline-flex items-center justify-center rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href={login()}
+                className="inline-flex items-center justify-center rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+              >
+                Log in
+              </Link>
+            )}
           </div>
           <button className="flex md:hidden" onClick={toggleMenu}>
             <Menu className="h-6 w-6" />
@@ -104,57 +110,32 @@ export function Header() {
             </button>
           </div>
           <div className="container mx-auto px-4 py-8">
-            <nav className="flex flex-col space-y-6">
-              <Link
-                href={`${route('home')}#services`}
+            <nav className="flex flex-col items-center space-y-6">
+              <button
+                onClick={() => handleSmoothScroll('pricing')}
                 className="text-lg font-medium transition-colors hover:text-primary"
-                onClick={toggleMenu}
-              >
-                Services
-              </Link>
-              <Link
-                href={`${route('home')}#work`}
-                className="text-lg font-medium transition-colors hover:text-primary"
-                onClick={toggleMenu}
-              >
-                Work
-              </Link>
-              <Link
-                href={`${route('home')}#about`}
-                className="text-lg font-medium transition-colors hover:text-primary"
-                onClick={toggleMenu}
-              >
-                About
-              </Link>
-              <Link
-                href={`${route('home')}#clients`}
-                className="text-lg font-medium transition-colors hover:text-primary"
-                onClick={toggleMenu}
-              >
-                Clients
-              </Link>
-              <Link
-                href={`${route('home')}#contact`}
-                className="text-lg font-medium transition-colors hover:text-primary"
-                onClick={toggleMenu}
-              >
-                Contact
-              </Link>
-              <Link
-                href={route('pricing')}
-                className="text-lg font-medium transition-colors hover:text-primary"
-                onClick={toggleMenu}
               >
                 Pricing
-              </Link>
+              </button>
             </nav>
             <div className="mt-8 flex flex-col space-y-4">
-              <Button variant="outline" className="w-full rounded-3xl">
-                Log In
-              </Button>
-              <Button className="w-full rounded-3xl">
-                Get Started
-              </Button>
+              {auth.user ? (
+                <Link
+                  href={dashboard()}
+                  className="inline-flex items-center justify-center rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                  onClick={toggleMenu}
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href={login()}
+                  className="inline-flex items-center justify-center rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                  onClick={toggleMenu}
+                >
+                  Log in
+                </Link>
+              )}
             </div>
           </div>
         </motion.div>
