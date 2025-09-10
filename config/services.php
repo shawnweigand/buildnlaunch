@@ -41,4 +41,11 @@ return [
         'redirect_url' => env('WORKOS_REDIRECT_URL'),
     ],
 
+    // Laravel Socialite: https://laravel.com/docs/12.x/socialite#configuration
+    'github' => [ // facebook, x, linkedin-openid, google, github, gitlab, bitbucket, slack, slack-openid
+        'client_id' => env('GITHUB_CLIENT_ID'),
+        'client_secret' => env('GITHUB_CLIENT_SECRET'),
+        'redirect' => 'http://example.com/callback-url',
+    ],
+
 ];

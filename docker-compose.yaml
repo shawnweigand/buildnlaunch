@@ -81,6 +81,6 @@ networks:
   buildnlaunch_app:
     driver: bridge
 
-volumes:
+# volumes:
   # buildnlaunch_pgsql_data:
   # buildnlaunch_redis_data:
