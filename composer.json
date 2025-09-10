@@ -20,6 +20,8 @@
         "lorisleiva/laravel-actions": "^2.9",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-typescript-transformer": "^2.5",
+        "symfony/http-client": "^7.3",
+        "symfony/mailgun-mailer": "^7.3",
         "tightenco/ziggy": "^2.5"
     },
     "require-dev": {
