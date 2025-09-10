@@ -5,8 +5,12 @@ use Inertia\Inertia;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    return Inertia::render('landing');
 })->name('home');
+
+Route::get('/pricing', function () {
+    return Inertia::render('pricing');
+})->name('pricing');
 
 Route::middleware([
     'auth',
