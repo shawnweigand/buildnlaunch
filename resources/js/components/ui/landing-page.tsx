@@ -33,6 +33,10 @@ import { useState, useRef } from "react"
 // @ts-ignore
 import confetti from "canvas-confetti"
 import { smoothScrollToElement } from "@/lib/smooth-scroll"
+import { CircularTestimonials } from "@/components/ui/circular-testimonials"
+import { InfiniteSlider } from "@/components/ui/infinite-slider"
+import FAQs from "@/components/ui/faqs-component"
+import DisplayCards from "@/components/ui/display-cards"
 
 // Animation variants
 const fadeIn = {
@@ -122,6 +126,33 @@ const demoPlans = [
   },
 ];
 
+const testimonials = [
+  {
+    quote: "Working with this design studio was an absolute game-changer for our business. Their attention to detail and creative vision helped us stand out in a crowded market.",
+    name: "Sarah Johnson",
+    designation: "CEO, TechStart Inc.",
+    src: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face"
+  },
+  {
+    quote: "The team's ability to translate our complex ideas into beautiful, user-friendly designs exceeded all our expectations. We couldn't be happier with the results.",
+    name: "Michael Chen",
+    designation: "Product Manager, InnovateCo",
+    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
+  },
+  {
+    quote: "From concept to launch, the entire process was seamless. Their expertise in both design and development made our project a huge success.",
+    name: "Emily Rodriguez",
+    designation: "Founder, Creative Solutions",
+    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+  },
+  {
+    quote: "The level of professionalism and creativity this team brings to every project is unmatched. They truly understand how to create designs that convert.",
+    name: "David Thompson",
+    designation: "Marketing Director, GrowthCorp",
+    src: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
+  }
+];
+
 export function DesignAgency() {
   const [isMonthly, setIsMonthly] = useState(true);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -157,11 +188,11 @@ export function DesignAgency() {
   };
 
   const handleSmoothScroll = (elementId: string) => {
-    smoothScrollToElement(elementId, { offset: 100 });
+    smoothScrollToElement(elementId, { duration: 0 });
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-muted/20 w-full overflow-x-hidden">
+    <div className="flex min-h-screen flex-col bg-background w-full overflow-x-hidden">
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 overflow-hidden">
@@ -190,9 +221,9 @@ export function DesignAgency() {
                     transition={{ duration: 0.7, delay: 0.2 }}
                     className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
                   >
-                    We design digital experiences that people{" "}
+                    Do it like this,{" "}
                     <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-                      love
+                      not that
                     </span>
                   </motion.h1>
                   <motion.p
@@ -223,14 +254,6 @@ export function DesignAgency() {
                     >
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </motion.span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-3xl"
-                    onClick={() => handleSmoothScroll('work')}
-                  >
-                    View Our Work
                   </Button>
                 </motion.div>
               </motion.div>
@@ -318,6 +341,263 @@ export function DesignAgency() {
           </motion.div>
         </section>
 
+        {/* Infinite Slider Section */}
+        <section id="partners" className="w-full py-12 md:py-16 lg:py-20">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="container px-4 md:px-6 rounded-3xl mx-auto"
+          >
+            <div className="flex flex-col items-center justify-center space-y-4 text-center py-10">
+              <div className="space-y-3">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-block rounded-3xl bg-muted px-3 py-1 text-sm"
+                >
+                  Partners
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
+                >
+                  Trusted by Industry Leaders
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
+                >
+                  We're proud to work with some of the most innovative companies in the world
+                </motion.p>
+              </div>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="py-8"
+            >
+              {/* First Slider - Left to Right */}
+              <InfiniteSlider duration={30} durationOnHover={60} gap={32}>
+                {[
+                  {
+                    name: "TechCorp",
+                    logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "InnovateLab",
+                    logo: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "DigitalFlow",
+                    logo: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "CreativeStudio",
+                    logo: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "FutureTech",
+                    logo: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "DesignHub",
+                    logo: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "WebCraft",
+                    logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "PixelPerfect",
+                    logo: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=100&fit=crop&crop=center"
+                  }
+                ].map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-center w-64 h-32 bg-background border border-muted rounded-2xl p-6 hover:shadow-md transition-shadow"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                ))}
+              </InfiniteSlider>
+
+              {/* Second Slider - Right to Left (Opposite Direction) */}
+              <InfiniteSlider duration={35} durationOnHover={70} gap={32} reverse={true} className="mt-8">
+                {[
+                  {
+                    name: "DataViz",
+                    logo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "CloudTech",
+                    logo: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "MobileFirst",
+                    logo: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "AICorp",
+                    logo: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "BlockChain",
+                    logo: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "CyberSec",
+                    logo: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "GreenTech",
+                    logo: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "FinTech",
+                    logo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=100&fit=crop&crop=center"
+                  }
+                ].map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-center w-64 h-32 bg-background border border-muted rounded-2xl p-6 hover:shadow-md transition-shadow"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                ))}
+              </InfiniteSlider>
+
+              {/* Third Slider - Left to Right */}
+              <InfiniteSlider duration={40} durationOnHover={80} gap={32} className="mt-8">
+                {[
+                  {
+                    name: "StartupHub",
+                    logo: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "VentureLab",
+                    logo: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "GrowthCo",
+                    logo: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "ScaleUp",
+                    logo: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "InnovateX",
+                    logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "NextGen",
+                    logo: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "FutureLab",
+                    logo: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=100&fit=crop&crop=center"
+                  },
+                  {
+                    name: "TechVenture",
+                    logo: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=100&fit=crop&crop=center"
+                  }
+                ].map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-center w-64 h-32 bg-background border border-muted rounded-2xl p-6 hover:shadow-md transition-shadow"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                ))}
+              </InfiniteSlider>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="container px-4 md:px-6 rounded-3xl mx-auto"
+          >
+            <div className="flex flex-col items-center justify-center space-y-4 text-center py-10">
+              <div className="space-y-3">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-block rounded-3xl bg-muted px-3 py-1 text-sm"
+                >
+                  Testimonials
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
+                >
+                  What Our Clients Say
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
+                >
+                  Don't just take our word for it - hear from the clients who've experienced our work firsthand
+                </motion.p>
+              </div>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center"
+            >
+              <CircularTestimonials
+                testimonials={testimonials}
+                autoplay={true}
+                colors={{
+                  name: "hsl(var(--foreground))",
+                  designation: "hsl(var(--muted-foreground))",
+                  testimony: "hsl(var(--foreground))",
+                  arrowBackground: "hsl(var(--primary))",
+                  arrowForeground: "hsl(var(--primary-foreground))",
+                  arrowHoverBackground: "hsl(var(--primary) / 0.8)",
+                }}
+                fontSizes={{
+                  name: "1.75rem",
+                  designation: "1rem",
+                  quote: "1.125rem",
+                }}
+              />
+            </motion.div>
+          </motion.div>
+        </section>
+
         {/* Work Section */}
         <section id="work" className="w-full py-12 md:py-24 lg:py-32">
           <motion.div
@@ -360,7 +640,7 @@ export function DesignAgency() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="mx-auto grid max-w-6xl items-center gap-3 py-12 md:grid-cols-2 lg:grid-cols-3"
+              className="mx-auto flex items-center justify-center gap-8 py-12"
             >
               {[
                 {
@@ -380,57 +660,52 @@ export function DesignAgency() {
                   description: "Complete visual identity for a tech startup",
                   image: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&h=400&fit=crop&crop=center",
                   category: "Branding"
-                },
-                {
-                  title: "Restaurant Website",
-                  description: "Beautiful website showcasing culinary excellence",
-                  image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&h=400&fit=crop&crop=center",
-                  category: "Web Design"
-                },
-                {
-                  title: "SaaS Dashboard",
-                  description: "Analytics dashboard with real-time data visualization",
-                  image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop&crop=center",
-                  category: "UI/UX Design"
-                },
-                {
-                  title: "Fitness App",
-                  description: "Motivational workout tracking and social features",
-                  image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop&crop=center",
-                  category: "Mobile App"
                 }
               ].map((project, index) => (
-                <motion.div
-                  key={index}
-                  variants={itemFadeIn}
-                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                  className="group relative overflow-hidden rounded-3xl border bg-background/80 shadow-sm transition-all hover:shadow-md"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="mb-2">
-                      <span className="inline-block rounded-3xl bg-muted px-3 py-1 text-xs font-medium">
-                        {project.category}
-                      </span>
+                <div key={index} className="flex items-center">
+                  <motion.div
+                    variants={itemFadeIn}
+                    whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                    className="group relative overflow-hidden rounded-3xl border bg-background/80 shadow-sm transition-all hover:shadow-md w-80"
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{project.description}</p>
-                    <div className="flex items-center justify-between">
-                      <Link href="#" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-                        View Project
-                      </Link>
-                      <motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
-                        <ArrowUpRight className="h-4 w-4 text-primary" />
-                      </motion.div>
+                    <div className="p-6">
+                      <div className="mb-2">
+                        <span className="inline-block rounded-3xl bg-muted px-3 py-1 text-xs font-medium">
+                          {project.category}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4">{project.description}</p>
+                      <div className="flex items-center justify-between">
+                        <Link href="#" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+                          View Project
+                        </Link>
+                        <motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+                          <ArrowUpRight className="h-4 w-4 text-primary" />
+                        </motion.div>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                  {index < 2 && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.3 + index * 0.2 }}
+                      className="mx-4 flex items-center justify-center"
+                    >
+                      <div className="rounded-full bg-primary/10 p-3">
+                        <ArrowRight className="h-6 w-6 text-primary" />
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
               ))}
             </motion.div>
           </motion.div>
@@ -443,7 +718,7 @@ export function DesignAgency() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            className="container px-4 md:px-6 border border-muted rounded-3xl bg-gradient-to-br from-background to-muted/30 mx-auto"
+            className="container px-4 md:px-6 border border-muted rounded-3xl bg-muted/20 mx-auto"
           >
             <div className="grid gap-3 lg:grid-cols-2 lg:gap-3">
               <motion.div
@@ -517,6 +792,84 @@ export function DesignAgency() {
                 </div>
               </motion.div>
             </div>
+          </motion.div>
+        </section>
+
+        {/* Display Cards Section */}
+        <section id="showcase" className="w-full py-12 md:py-24 lg:py-32">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="container px-4 md:px-6 rounded-3xl mx-auto"
+          >
+            <div className="flex flex-col items-center justify-center space-y-4 text-center py-10">
+              <div className="space-y-3">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-block rounded-3xl bg-muted px-3 py-1 text-sm"
+                >
+                  Showcase
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
+                >
+                  Featured Work
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
+                >
+                  Explore our most recent and impactful projects that showcase our creative expertise
+                </motion.p>
+              </div>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center py-12"
+            >
+              <DisplayCards
+                cards={[
+                  {
+                    icon: <Sparkles className="size-4 text-primary" />,
+                    title: "E-commerce Platform",
+                    description: "Modern online store with seamless UX",
+                    date: "2 weeks ago",
+                    iconClassName: "text-primary",
+                    titleClassName: "text-primary",
+                    className: "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration:700 hover:grayscale-0 before:left-0 before:top-0",
+                  },
+                  {
+                    icon: <Palette className="size-4 text-primary" />,
+                    title: "Brand Identity",
+                    description: "Complete visual identity for startup",
+                    date: "1 month ago",
+                    iconClassName: "text-primary",
+                    titleClassName: "text-primary",
+                    className: "[grid-area:stack] translate-x-16 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration:700 hover:grayscale-0 before:left-0 before:top-0",
+                  },
+                  {
+                    icon: <Code className="size-4 text-primary" />,
+                    title: "Mobile App",
+                    description: "Cross-platform fitness tracking app",
+                    date: "3 days ago",
+                    iconClassName: "text-primary",
+                    titleClassName: "text-primary",
+                    className: "[grid-area:stack] translate-x-32 translate-y-20 hover:translate-y-10",
+                  },
+                ]}
+              />
+            </motion.div>
           </motion.div>
         </section>
 
@@ -782,6 +1135,9 @@ export function DesignAgency() {
           </motion.div>
         </section>
 
+        {/* FAQs Section */}
+        <FAQs />
+
         {/* Contact Section */}
         <section id="contact" className="w-full py-12 md:py-24 lg:py-32">
           <motion.div
@@ -789,7 +1145,7 @@ export function DesignAgency() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            className="container grid items-center gap-3 px-4 md:px-6 lg:grid-cols-2 border border-muted rounded-3xl mx-auto"
+            className="container grid items-center gap-3 px-4 md:px-6 lg:grid-cols-2 border border-muted rounded-3xl bg-muted/20 mx-auto"
           >
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -918,7 +1274,7 @@ export function DesignAgency() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeIn}
-          className="container grid gap-3 px-4 py-10 md:px-6 lg:grid-cols-4 mx-auto"
+          className="container grid gap-3 px-4 py-10 md:px-6 lg:grid-cols-5 mx-auto"
         >
           <div className="space-y-3">
             <Link href="/" className="flex items-center space-x-3">
@@ -950,98 +1306,65 @@ export function DesignAgency() {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            <div>
-              <h3 className="text-lg font-medium">Company</h3>
-              <nav className="mt-4 flex flex-col space-y-2 text-sm">
-                <button
-                  onClick={() => handleSmoothScroll('about')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  About Us
-                </button>
-                <button
-                  onClick={() => handleSmoothScroll('services')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  Our Services
-                </button>
-                <button
-                  onClick={() => handleSmoothScroll('work')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  Our Work
-                </button>
-                <button
-                  onClick={() => handleSmoothScroll('contact')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  Contact Us
-                </button>
-              </nav>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium">Services</h3>
-              <nav className="mt-4 flex flex-col space-y-2 text-sm">
-                <button
-                  onClick={() => handleSmoothScroll('services')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  UI/UX Design
-                </button>
-                <button
-                  onClick={() => handleSmoothScroll('services')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  Web Development
-                </button>
-                <button
-                  onClick={() => handleSmoothScroll('services')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  Brand Identity
-                </button>
-                <button
-                  onClick={() => handleSmoothScroll('services')}
-                  className="text-muted-foreground hover:text-foreground text-left"
-                >
-                  Digital Marketing
-                </button>
-              </nav>
-            </div>
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium">Company</h3>
+            <nav className="flex flex-col space-y-2 text-sm">
+              <button
+                onClick={() => handleSmoothScroll('about')}
+                className="text-muted-foreground hover:text-foreground text-left"
+              >
+                About Us
+              </button>
+              <button
+                onClick={() => handleSmoothScroll('services')}
+                className="text-muted-foreground hover:text-foreground text-left"
+              >
+                Services
+              </button>
+              <button
+                onClick={() => handleSmoothScroll('work')}
+                className="text-muted-foreground hover:text-foreground text-left"
+              >
+                Portfolio
+              </button>
+              <button
+                onClick={() => handleSmoothScroll('contact')}
+                className="text-muted-foreground hover:text-foreground text-left"
+              >
+                Contact
+              </button>
+            </nav>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            <div>
-              <h3 className="text-lg font-medium">Resources</h3>
-              <nav className="mt-4 flex flex-col space-y-2 text-sm">
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Blog
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Case Studies
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Guides & Tutorials
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  FAQ
-                </Link>
-              </nav>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium">Legal</h3>
-              <nav className="mt-4 flex flex-col space-y-2 text-sm">
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Privacy Policy
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Terms of Service
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Cookie Policy
-                </Link>
-              </nav>
-            </div>
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium">Legal</h3>
+            <nav className="flex flex-col space-y-2 text-sm">
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Privacy Policy
+              </Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Terms of Service
+              </Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Cookie Policy
+              </Link>
+            </nav>
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium">Other Sites</h3>
+            <nav className="flex flex-col space-y-2 text-sm">
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Personal Blog
+              </Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Design Resources
+              </Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Open Source
+              </Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                Photography
+              </Link>
+            </nav>
           </div>
           <div className="space-y-3">
             <h3 className="text-lg font-medium">Subscribe to our newsletter</h3>
