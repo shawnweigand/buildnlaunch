@@ -221,10 +221,11 @@ export function DesignAgency() {
                     transition={{ duration: 0.7, delay: 0.2 }}
                     className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
                   >
-                    Do it like this,{" "}
+                    Do it {" "}
                     <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-                      not that
+                      like this, {""}
                     </span>
+                    not that.
                   </motion.h1>
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}

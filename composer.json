@@ -18,6 +18,8 @@
         "laravel/wayfinder": "^0.1.9",
         "laravel/workos": "^0.1.0",
         "lorisleiva/laravel-actions": "^2.9",
+        "mydnic/volet": "^2.1",
+        "mydnic/volet-feature-board": "^1.0",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-typescript-transformer": "^2.5",
         "symfony/http-client": "^7.3",
@@ -62,6 +64,9 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "post-package-update": [
+            "@php artisan vendor:publish --tag=volet-assets --force"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
