@@ -51,20 +51,20 @@ services:
     networks:
       - buildnlaunch_app
 
-  # pgsql:
-  #   container_name: buildnlaunch_pgsql
-  #   image: postgres:17
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: root
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: buildnlaunch
-  #   volumes:
-  #     - buildnlaunch_pgsql_data:/var/lib/pgsql/data
-  #   ports:
-  #     - "5432:5432"
-  #   networks:
-  #     - buildnlaunch_app
+  pgsql:
+    container_name: buildnlaunch_pgsql
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: buildnlaunch
+    volumes:
+      - buildnlaunch_pgsql_data:/var/lib/pgsql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - buildnlaunch_app
 
   # redis:
   #   container_name: buildnlaunch_redis
@@ -81,6 +81,6 @@ networks:
   buildnlaunch_app:
     driver: bridge
 
-# volumes:
-  # buildnlaunch_pgsql_data:
+volumes:
+  buildnlaunch_pgsql_data:
   # buildnlaunch_redis_data:
