@@ -21,6 +21,7 @@ Route::get('/waitlist', [WaitlistController::class, 'show'])->name('waitlist');
 
 // Waitlist API routes
 Route::get('/waitlist/survey-config', [WaitlistController::class, 'getSurveyConfig'])->name('waitlist.survey-config');
+Route::get('/waitlist/survey-results', [WaitlistController::class, 'getSurveyResults'])->name('waitlist.survey-results');
 Route::post('/waitlist/email', [WaitlistController::class, 'addEmail'])->name('waitlist.add-email');
 Route::post('/waitlist/survey', [WaitlistController::class, 'addSurvey'])->name('waitlist.add-survey');
 

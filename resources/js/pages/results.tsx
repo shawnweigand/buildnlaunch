@@ -1,5 +1,9 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import { useState } from 'react';
+import { BarChart3, Users, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import SurveyResults from '@/components/SurveyResults';
 
 interface WaitlistEntry {
     id: number;
@@ -26,6 +30,23 @@ interface ResultsPageProps extends PageProps {
 }
 
 export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
+    const [activeTab, setActiveTab] = useState<'analytics' | 'entries'>('analytics');
+
+    const tabs = [
+        {
+            id: 'analytics' as const,
+            name: 'Survey Analytics',
+            icon: BarChart3,
+            count: stats.completed_surveys,
+        },
+        {
+            id: 'entries' as const,
+            name: 'Waitlist Entries',
+            icon: Users,
+            count: stats.total_entries,
+        },
+    ];
+
     return (
         <>
             <Head title="Results" />
@@ -33,6 +54,19 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     <div className="px-4 py-6 sm:px-0">
                         <div className="mb-8">
+                            <div className="flex items-center gap-4 mb-4">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    asChild
+                                    className="flex items-center gap-2"
+                                >
+                                    <Link href="/dashboard">
+                                        <ArrowLeft className="h-4 w-4" />
+                                        Back to Dashboard
+                                    </Link>
+                                </Button>
+                            </div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                                 Waitlist Results
                             </h1>
@@ -116,73 +150,139 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                             </div>
                         </div>
 
-                        {/* Waitlist Entries Table */}
-                        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
-                            <div className="px-4 py-5 sm:px-6">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-                                    Waitlist Entries
-                                </h3>
-                                <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                                    All waitlist signups and survey responses
-                                </p>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead className="bg-gray-50 dark:bg-gray-700">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Name
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Email
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Survey Status
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Signup Date
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        {waitlistEntries.map((entry) => (
-                                            <tr key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                    {entry.first_name || 'N/A'}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                    {entry.email}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                        entry.question_1
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                        {/* Tab Navigation */}
+                        <div className="mb-8">
+                            <div className="border-b border-gray-200 dark:border-gray-700">
+                                <nav className="-mb-px flex space-x-8">
+                                    {tabs.map((tab) => {
+                                        const Icon = tab.icon;
+                                        return (
+                                            <button
+                                                key={tab.id}
+                                                onClick={() => setActiveTab(tab.id)}
+                                                className={`group inline-flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
+                                                    activeTab === tab.id
+                                                        ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                                                }`}
+                                            >
+                                                <Icon className={`-ml-0.5 mr-2 h-5 w-5 ${
+                                                    activeTab === tab.id
+                                                        ? 'text-blue-500 dark:text-blue-400'
+                                                        : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                                                }`} />
+                                                {tab.name}
+                                                {tab.count > 0 && (
+                                                    <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium ${
+                                                        activeTab === tab.id
+                                                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
+                                                            : 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-300'
                                                     }`}>
-                                                        {entry.question_1 ? 'Completed' : 'Incomplete'}
+                                                        {tab.count}
                                                     </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                    {new Date(entry.created_at).toLocaleDateString()}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </nav>
                             </div>
                         </div>
 
-                        {waitlistEntries.length === 0 && (
-                            <div className="text-center py-12">
-                                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No waitlist entries</h3>
-                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    Get started by sharing your waitlist link.
-                                </p>
-                            </div>
-                        )}
+                        {/* Tab Content */}
+                        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+                            {activeTab === 'analytics' && (
+                                <div>
+                                    <div className="px-4 py-5 sm:px-6">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                                            Survey Analytics
+                                        </h3>
+                                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                                            Visual breakdown of survey responses
+                                        </p>
+                                    </div>
+                                    <div className="px-4 py-5 sm:px-6">
+                                        {stats.completed_surveys > 0 ? (
+                                            <SurveyResults />
+                                        ) : (
+                                            <div className="text-center py-12">
+                                                <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
+                                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No survey data</h3>
+                                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                    Survey analytics will appear here once people complete the survey.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'entries' && (
+                                <div>
+                                    <div className="px-4 py-5 sm:px-6">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                                            Waitlist Entries
+                                        </h3>
+                                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                                            All waitlist signups and survey responses
+                                        </p>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead className="bg-gray-50 dark:bg-gray-700">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                        Name
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                        Email
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                        Survey Status
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                        Signup Date
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                                {waitlistEntries.map((entry) => (
+                                                    <tr key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                            {entry.first_name || 'N/A'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                            {entry.email}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                                entry.question_1
+                                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                            }`}>
+                                                                {entry.question_1 ? 'Completed' : 'Incomplete'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                            {new Date(entry.created_at).toLocaleDateString()}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {waitlistEntries.length === 0 && (
+                                        <div className="text-center py-12">
+                                            <Users className="mx-auto h-12 w-12 text-gray-400" />
+                                            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No waitlist entries</h3>
+                                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                Get started by sharing your waitlist link.
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

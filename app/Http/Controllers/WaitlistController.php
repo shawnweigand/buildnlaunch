@@ -132,4 +132,75 @@ class WaitlistController extends Controller
 
         return response()->json($surveyConfig);
     }
+
+    /**
+     * Get survey results for analytics
+     */
+    public function getSurveyResults(): JsonResponse
+    {
+        $surveyConfig = config('survey');
+        $results = [];
+
+        // Get all waitlist entries
+        $totalWaitlistEntries = Waitlist::count();
+
+        // Get all completed survey responses
+        $completedSurveys = Waitlist::whereNotNull('question_1')
+            ->whereNotNull('question_2')
+            ->whereNotNull('question_3')
+            ->whereNotNull('question_4')
+            ->whereNotNull('question_5')
+            ->get();
+
+        $completedCount = $completedSurveys->count();
+        $completionRate = $totalWaitlistEntries > 0 ? round(($completedCount / $totalWaitlistEntries) * 100, 1) : 0;
+
+        // Process each question
+        foreach ($surveyConfig['questions'] as $questionNumber => $questionData) {
+            $questionResults = [];
+
+            if ($questionData['type'] === 'multiple_choice') {
+                // Count responses for each option
+                $optionCounts = [];
+                foreach ($questionData['options'] as $optionKey => $optionLabel) {
+                    $count = $completedSurveys->where("question_{$questionNumber}", $optionKey)->count();
+                    $optionCounts[] = [
+                        'name' => $optionLabel,
+                        'value' => $count,
+                        'key' => $optionKey
+                    ];
+                }
+                $questionResults = $optionCounts;
+            } elseif ($questionData['type'] === 'scale') {
+                // Count responses for each scale value
+                $scaleCounts = [];
+                for ($i = $questionData['min']; $i <= $questionData['max']; $i++) {
+                    $count = $completedSurveys->where("question_{$questionNumber}", (string)$i)->count();
+                    if ($count > 0) {
+                        $scaleCounts[] = [
+                            'name' => (string)$i,
+                            'value' => $count,
+                            'key' => (string)$i
+                        ];
+                    }
+                }
+                $questionResults = $scaleCounts;
+            }
+
+            $results[$questionNumber] = [
+                'question' => $questionData['question'],
+                'type' => $questionData['type'],
+                'data' => $questionResults,
+                'total_responses' => $completedCount
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $results,
+            'total_completed' => $completedCount,
+            'total_waitlist_entries' => $totalWaitlistEntries,
+            'completion_rate' => $completionRate
+        ]);
+    }
 }
