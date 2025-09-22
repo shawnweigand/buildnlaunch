@@ -69,6 +69,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Authorized Emails
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of email addresses that are authorized to access
+    | restricted pages like the results page. Set this in your ".env" file.
+    |
+    */
+
+    'authorized_emails' => env('AUTHORIZED_EMAILS', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |
