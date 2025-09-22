@@ -14,7 +14,9 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 // Use to only access when subscribed -> Route::get('/example', function () {...})->middleware([Subscribed::class]);
 
 Route::get('/', function () {
-    return Inertia::render('landing');
+    return Inertia::render('landing', [
+        'pricing' => config('pricing'),
+    ]);
 })->name('home');
 
 Route::get('/waitlist', [WaitlistController::class, 'show'])->name('waitlist');
