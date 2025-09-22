@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ResultsController;
+use App\Http\Controllers\WaitlistController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +17,13 @@ Route::get('/', function () {
     return Inertia::render('landing');
 })->name('home');
 
+Route::get('/waitlist', [WaitlistController::class, 'show'])->name('waitlist');
+
+// Waitlist API routes
+Route::get('/waitlist/survey-config', [WaitlistController::class, 'getSurveyConfig'])->name('waitlist.survey-config');
+Route::post('/waitlist/email', [WaitlistController::class, 'addEmail'])->name('waitlist.add-email');
+Route::post('/waitlist/survey', [WaitlistController::class, 'addSurvey'])->name('waitlist.add-survey');
+
 // WorkOS
 Route::middleware([
     'auth',
@@ -23,6 +32,15 @@ Route::middleware([
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+});
+
+// Results page - only accessible by authorized emails
+Route::middleware([
+    'auth',
+    ValidateSessionWithWorkOS::class,
+    'auth.email',
+])->group(function () {
+    Route::get('results', [ResultsController::class, 'index'])->name('results');
 });
 
 
