@@ -214,7 +214,6 @@ export default function Waitlist({ survey, email, first_name, success }: Waitlis
                                         <div className="flex flex-col gap-3 sm:flex-row">
                                             <div className="flex-1 min-w-0 sm:min-w-[300px]">
                                                 <Input
-                                                    type="email"
                                                     placeholder="Enter your email address"
                                                     value={data.email}
                                                     onChange={(e) => setData('email', e.target.value)}

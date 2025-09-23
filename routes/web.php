@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\WaitlistController;
 use App\Models\User;
@@ -27,6 +28,14 @@ Route::get('/waitlist/survey-results', [WaitlistController::class, 'getSurveyRes
 Route::post('/waitlist/email', [WaitlistController::class, 'addEmail'])->name('waitlist.add-email');
 Route::post('/waitlist/survey', [WaitlistController::class, 'addSurvey'])->name('waitlist.add-survey');
 
+// Quiz routes
+Route::get('/quiz', [QuizController::class, 'intro'])->name('quiz.intro');
+Route::get('/quiz/start', [QuizController::class, 'start'])->name('quiz.start');
+Route::post('/quiz/start', [QuizController::class, 'storeStart'])->name('quiz.store-start');
+Route::get('/quiz/questions', [QuizController::class, 'questions'])->name('quiz.questions');
+Route::post('/quiz/submit', [QuizController::class, 'submit'])->name('quiz.submit');
+Route::get('/quiz/complete', [QuizController::class, 'complete'])->name('quiz.complete');
+
 // WorkOS
 Route::middleware([
     'auth',
@@ -44,6 +53,8 @@ Route::middleware([
     'auth.email',
 ])->group(function () {
     Route::get('results', [ResultsController::class, 'index'])->name('results');
+    Route::get('results/survey-analytics', [ResultsController::class, 'getSurveyAnalytics'])->name('results.survey-analytics');
+    Route::get('results/quiz-analytics', [ResultsController::class, 'getQuizAnalytics'])->name('results.quiz-analytics');
 });
 
 

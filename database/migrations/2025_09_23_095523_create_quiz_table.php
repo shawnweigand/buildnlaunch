@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('waitlist', function (Blueprint $table) {
+        Schema::create('quiz', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('email')->unique();
             $table->string('question_1', 50)->nullable(); // Multiple choice
             $table->string('question_2', 50)->nullable(); // Multiple choice
             $table->string('question_3', 50)->nullable(); // Multiple choice
             $table->string('question_4', 50)->nullable(); // Multiple choice
-            $table->integer('question_5')->nullable(); // Scale
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('question_5', 50)->nullable(); // Multiple choice
+            $table->string('question_6', 50)->nullable(); // Multiple choice
+            $table->string('question_7', 50)->nullable(); // Multiple choice
+            $table->string('question_8', 50)->nullable(); // Multiple choice
+            $table->string('question_9', 50)->nullable(); // Multiple choice
+            $table->string('question_10', 50)->nullable(); // Multiple choice
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
-
-            $table->index('email');
         });
     }
 
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('waitlist');
+        Schema::dropIfExists('quiz');
     }
 };

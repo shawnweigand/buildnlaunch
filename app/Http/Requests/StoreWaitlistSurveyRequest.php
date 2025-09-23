@@ -23,7 +23,7 @@ class StoreWaitlistSurveyRequest extends FormRequest
     {
         $questions = config('survey.questions');
         $rules = [
-            'email' => ['required', 'email:rfc,dns', 'exists:waitlist,email'],
+            'email' => ['required', 'email:rfc,dns', 'exists:emails,email'],
         ];
 
         foreach ($questions as $questionNumber => $questionData) {

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWaitlistEmailRequest extends FormRequest
+class StartQuizRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,15 +22,16 @@ class StoreWaitlistEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'email:rfc,dns',
+                'max:255',
                 function ($attribute, $value, $fail) {
                     $existingEntry = \App\Models\Email::where('email', $value)->first();
 
-                    if ($existingEntry && $existingEntry->waitlist && $existingEntry->waitlist->isWaitlistComplete()) {
-                        $fail('This email is already on our waitlist and has completed the survey.');
+                    if ($existingEntry && $existingEntry->quiz && $existingEntry->quiz->isQuizComplete()) {
+                        $fail('This email has already completed the quiz.');
                     }
                 }
             ],
@@ -45,11 +46,12 @@ class StoreWaitlistEmailRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => 'Please enter your first name.',
-            'first_name.string' => 'Please enter a valid first name.',
-            'first_name.max' => 'First name must not exceed 255 characters.',
-            'email.required' => 'Please enter your email address.',
+            'name.required' => 'Please enter your name to start the quiz.',
+            'name.string' => 'Please enter a valid name.',
+            'name.max' => 'Your name must not exceed 255 characters.',
+            'email.required' => 'Please enter your email address to start the quiz.',
             'email.email' => 'Please enter a valid email address.',
+            'email.max' => 'Your email must not exceed 255 characters.',
         ];
     }
 }
