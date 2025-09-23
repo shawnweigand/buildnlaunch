@@ -29,12 +29,12 @@ Route::post('/waitlist/email', [WaitlistController::class, 'addEmail'])->name('w
 Route::post('/waitlist/survey', [WaitlistController::class, 'addSurvey'])->name('waitlist.add-survey');
 
 // Quiz routes
-Route::get('/quiz', [QuizController::class, 'intro'])->name('quiz.intro');
-Route::get('/quiz/start', [QuizController::class, 'start'])->name('quiz.start');
-Route::post('/quiz/start', [QuizController::class, 'storeStart'])->name('quiz.store-start');
-Route::get('/quiz/questions', [QuizController::class, 'questions'])->name('quiz.questions');
-Route::post('/quiz/submit', [QuizController::class, 'submit'])->name('quiz.submit');
-Route::get('/quiz/complete', [QuizController::class, 'complete'])->name('quiz.complete');
+// Route::get('/quiz', [QuizController::class, 'intro'])->name('quiz.intro');
+// Route::get('/quiz/start', [QuizController::class, 'start'])->name('quiz.start');
+// Route::post('/quiz/start', [QuizController::class, 'storeStart'])->name('quiz.store-start');
+// Route::get('/quiz/questions', [QuizController::class, 'questions'])->name('quiz.questions');
+// Route::post('/quiz/submit', [QuizController::class, 'submit'])->name('quiz.submit');
+// Route::get('/quiz/complete', [QuizController::class, 'complete'])->name('quiz.complete');
 
 // WorkOS
 Route::middleware([
