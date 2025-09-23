@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Waitlist extends Model
+class Quiz extends Model
 {
-    protected $table = 'waitlist';
+    protected $table = 'quiz';
 
     protected $fillable = [
         'question_1',
@@ -15,6 +15,11 @@ class Waitlist extends Model
         'question_3',
         'question_4',
         'question_5',
+        'question_6',
+        'question_7',
+        'question_8',
+        'question_9',
+        'question_10',
         'completed_at',
     ];
 
@@ -26,7 +31,7 @@ class Waitlist extends Model
     }
 
     /**
-     * Get the emails associated with this waitlist entry.
+     * Get the emails associated with this quiz.
      */
     public function emails(): HasMany
     {
@@ -34,14 +39,19 @@ class Waitlist extends Model
     }
 
     /**
-     * Check if the waitlist survey is complete
+     * Check if the quiz is complete
      */
-    public function isWaitlistComplete(): bool
+    public function isQuizComplete(): bool
     {
         return ! is_null($this->question_1) &&
                ! is_null($this->question_2) &&
                ! is_null($this->question_3) &&
                ! is_null($this->question_4) &&
-               ! is_null($this->question_5);
+               ! is_null($this->question_5) &&
+               ! is_null($this->question_6) &&
+               ! is_null($this->question_7) &&
+               ! is_null($this->question_8) &&
+               ! is_null($this->question_9) &&
+               ! is_null($this->question_10);
     }
 }

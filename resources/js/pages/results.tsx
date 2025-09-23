@@ -1,47 +1,71 @@
 import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/types';
 import { useState } from 'react';
 import { BarChart3, Users, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SurveyResults from '@/components/SurveyResults';
+import QuizResults from '@/components/QuizResults';
 
-interface WaitlistEntry {
+interface Entry {
     id: number;
     first_name: string;
     email: string;
+    survey_completed_at?: string;
+    survey_completed: boolean;
+    quiz_completed_at?: string;
+    quiz_completed: boolean;
+    created_at: string;
+    updated_at: string;
+    // Survey data (for analytics)
     question_1?: string;
     question_2?: string;
     question_3?: string;
     question_4?: string;
     question_5?: string;
-    created_at: string;
-    updated_at: string;
+    // Quiz data (for analytics)
+    quiz_question_1?: string;
+    quiz_question_2?: string;
+    quiz_question_3?: string;
+    quiz_question_4?: string;
+    quiz_question_5?: string;
+    quiz_question_6?: string;
+    quiz_question_7?: string;
+    quiz_question_8?: string;
+    quiz_question_9?: string;
+    quiz_question_10?: string;
 }
 
 interface Stats {
     total_entries: number;
     completed_surveys: number;
+    completed_quizzes: number;
     incomplete_surveys: number;
+    incomplete_quizzes: number;
 }
 
-interface ResultsPageProps extends PageProps {
-    waitlistEntries: WaitlistEntry[];
+interface ResultsPageProps {
+    entries: Entry[];
     stats: Stats;
 }
 
-export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
-    const [activeTab, setActiveTab] = useState<'analytics' | 'entries'>('analytics');
+export default function Results({ entries, stats }: ResultsPageProps) {
+    const [activeTab, setActiveTab] = useState<'survey-analytics' | 'quiz-analytics' | 'entries'>('survey-analytics');
 
     const tabs = [
         {
-            id: 'analytics' as const,
+            id: 'survey-analytics' as const,
             name: 'Survey Analytics',
             icon: BarChart3,
             count: stats.completed_surveys,
         },
         {
+            id: 'quiz-analytics' as const,
+            name: 'Quiz Analytics',
+            icon: BarChart3,
+            count: stats.completed_quizzes,
+        },
+        {
             id: 'entries' as const,
-            name: 'Waitlist Entries',
+            name: 'Entries',
             icon: Users,
             count: stats.total_entries,
         },
@@ -68,10 +92,10 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                 </Button>
                             </div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                                Waitlist Results
+                                Results
                             </h1>
                             <p className="mt-2 text-gray-600 dark:text-gray-400">
-                                View and analyze waitlist signup data
+                                View and analyze signup data
                             </p>
                         </div>
 
@@ -118,6 +142,30 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                                 </dt>
                                                 <dd className="text-lg font-medium text-gray-900 dark:text-white">
                                                     {stats.completed_surveys}
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                                <div className="p-5">
+                                    <div className="flex items-center">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div className="ml-5 w-0 flex-1">
+                                            <dl>
+                                                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                                                    Completed Quizzes
+                                                </dt>
+                                                <dd className="text-lg font-medium text-gray-900 dark:text-white">
+                                                    {stats.completed_quizzes}
                                                 </dd>
                                             </dl>
                                         </div>
@@ -190,7 +238,7 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
 
                         {/* Tab Content */}
                         <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
-                            {activeTab === 'analytics' && (
+                            {activeTab === 'survey-analytics' && (
                                 <div>
                                     <div className="px-4 py-5 sm:px-6">
                                         <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
@@ -209,6 +257,32 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                                 <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No survey data</h3>
                                                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                                     Survey analytics will appear here once people complete the survey.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'quiz-analytics' && (
+                                <div>
+                                    <div className="px-4 py-5 sm:px-6">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                                            Quiz Analytics
+                                        </h3>
+                                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                                            Visual breakdown of quiz responses
+                                        </p>
+                                    </div>
+                                    <div className="px-4 py-5 sm:px-6">
+                                        {stats.completed_quizzes > 0 ? (
+                                            <QuizResults />
+                                        ) : (
+                                            <div className="text-center py-12">
+                                                <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
+                                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No quiz data</h3>
+                                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                    Quiz analytics will appear here once people complete the quiz.
                                                 </p>
                                             </div>
                                         )}
@@ -237,7 +311,7 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                                         Email
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        Survey Status
+                                                        Completion Status
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                         Signup Date
@@ -245,7 +319,7 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                                {waitlistEntries.map((entry) => (
+                                                {entries.map((entry) => (
                                                     <tr key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                                             {entry.first_name || 'N/A'}
@@ -254,13 +328,22 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                                             {entry.email}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap">
-                                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                                entry.question_1
-                                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                            }`}>
-                                                                {entry.question_1 ? 'Completed' : 'Incomplete'}
-                                                            </span>
+                                                            <div className="flex flex-col space-y-1">
+                                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                                    entry.survey_completed
+                                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                                                                }`}>
+                                                                    Survey: {entry.survey_completed ? 'Completed' : 'Incomplete'}
+                                                                </span>
+                                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                                    entry.quiz_completed
+                                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                                                                }`}>
+                                                                    Quiz: {entry.quiz_completed ? 'Completed' : 'Incomplete'}
+                                                                </span>
+                                                            </div>
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                             {new Date(entry.created_at).toLocaleDateString()}
@@ -271,10 +354,10 @@ export default function Results({ waitlistEntries, stats }: ResultsPageProps) {
                                         </table>
                                     </div>
 
-                                    {waitlistEntries.length === 0 && (
+                                    {entries.length === 0 && (
                                         <div className="text-center py-12">
                                             <Users className="mx-auto h-12 w-12 text-gray-400" />
-                                            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No waitlist entries</h3>
+                                            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No entries</h3>
                                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                                 Get started by sharing your waitlist link.
                                             </p>

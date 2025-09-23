@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreWaitlistEmailRequest;
 use App\Http\Requests\StoreWaitlistSurveyRequest;
+use App\Models\Email;
 use App\Models\Waitlist;
+use App\Models\Quiz;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,18 +47,18 @@ class WaitlistController extends Controller
     {
         $validated = $request->validated();
 
-        // Check if user already exists but hasn't completed survey
-        $waitlistEntry = Waitlist::where('email', $validated['email'])->first();
+        // Check if user already exists
+        $emailEntry = Email::where('email', $validated['email'])->first();
 
-        if ($waitlistEntry) {
-            // Update existing entry with new first name if provided
-            $waitlistEntry->update([
-                'first_name' => $validated['first_name'],
+        if ($emailEntry) {
+            // Update existing entry with new name if provided
+            $emailEntry->update([
+                'name' => $validated['first_name'],
             ]);
         } else {
-            // Create new entry
-            $waitlistEntry = Waitlist::create([
-                'first_name' => $validated['first_name'],
+            // Create new email entry
+            $emailEntry = Email::create([
+                'name' => $validated['first_name'],
                 'email' => $validated['email'],
             ]);
         }
@@ -64,9 +66,9 @@ class WaitlistController extends Controller
         $surveyConfig = config('survey');
 
         Log::info('Email added/updated in waitlist', [
-            'email' => $waitlistEntry->email,
-            'first_name' => $waitlistEntry->first_name,
-            'is_existing' => $waitlistEntry->wasRecentlyCreated === false,
+            'email' => $emailEntry->email,
+            'name' => $emailEntry->name,
+            'is_existing' => $emailEntry->wasRecentlyCreated === false,
             'expects_json' => $request->expectsJson(),
             'survey_config' => $surveyConfig
         ]);
@@ -74,8 +76,8 @@ class WaitlistController extends Controller
         // Redirect to waitlist page with survey data in session
         return redirect()->route('waitlist')->with([
             'success' => 'Email saved! Please answer a few quick questions.',
-            'first_name' => $waitlistEntry->first_name,
-            'email' => $waitlistEntry->email,
+            'first_name' => $emailEntry->name,
+            'email' => $emailEntry->email,
             'survey' => $surveyConfig,
         ]);
     }
@@ -87,23 +89,49 @@ class WaitlistController extends Controller
     {
         $validated = $request->validated();
 
-        $waitlistEntry = Waitlist::where('email', $validated['email'])->first();
+        // Find the email entry
+        $emailEntry = Email::where('email', $validated['email'])->first();
 
-        $waitlistEntry->update([
-            'question_1' => $validated['question_1'] ?? null,
-            'question_2' => $validated['question_2'] ?? null,
-            'question_3' => $validated['question_3'] ?? null,
-            'question_4' => $validated['question_4'] ?? null,
-            'question_5' => $validated['question_5'] ?? null,
-        ]);
+        if (!$emailEntry) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email not found in waitlist.',
+            ], 404);
+        }
+
+        // Create or update waitlist entry
+        if ($emailEntry->waitlist_id) {
+            // Update existing waitlist entry
+            $waitlistEntry = Waitlist::find($emailEntry->waitlist_id);
+            $waitlistEntry->update([
+                'question_1' => $validated['question_1'] ?? null,
+                'question_2' => $validated['question_2'] ?? null,
+                'question_3' => $validated['question_3'] ?? null,
+                'question_4' => $validated['question_4'] ?? null,
+                'question_5' => $validated['question_5'] ?? null,
+                'completed_at' => now(),
+            ]);
+        } else {
+            // Create new waitlist entry
+            $waitlistEntry = Waitlist::create([
+                'question_1' => $validated['question_1'] ?? null,
+                'question_2' => $validated['question_2'] ?? null,
+                'question_3' => $validated['question_3'] ?? null,
+                'question_4' => $validated['question_4'] ?? null,
+                'question_5' => $validated['question_5'] ?? null,
+                'completed_at' => now(),
+            ]);
+            // Update email entry with the new waitlist_id
+            $emailEntry->update(['waitlist_id' => $waitlistEntry->id]);
+        }
 
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Survey data saved successfully!',
                 'data' => [
-                    'id' => $waitlistEntry->id,
-                    'email' => $waitlistEntry->email,
+                    'id' => $emailEntry->id,
+                    'email' => $emailEntry->email,
                     'question_1' => $waitlistEntry->question_1,
                     'question_2' => $waitlistEntry->question_2,
                     'question_3' => $waitlistEntry->question_3,
@@ -141,10 +169,10 @@ class WaitlistController extends Controller
         $surveyConfig = config('survey');
         $results = [];
 
-        // Get all waitlist entries
-        $totalWaitlistEntries = Waitlist::count();
+        // Get all email entries
+        $totalEmailEntries = Email::count();
 
-        // Get all completed survey responses
+        // Get all completed waitlist survey responses
         $completedSurveys = Waitlist::whereNotNull('question_1')
             ->whereNotNull('question_2')
             ->whereNotNull('question_3')
@@ -153,7 +181,7 @@ class WaitlistController extends Controller
             ->get();
 
         $completedCount = $completedSurveys->count();
-        $completionRate = $totalWaitlistEntries > 0 ? round(($completedCount / $totalWaitlistEntries) * 100, 1) : 0;
+        $completionRate = $totalEmailEntries > 0 ? round(($completedCount / $totalEmailEntries) * 100, 1) : 0;
 
         // Process each question
         foreach ($surveyConfig['questions'] as $questionNumber => $questionData) {
@@ -199,7 +227,7 @@ class WaitlistController extends Controller
             'success' => true,
             'data' => $results,
             'total_completed' => $completedCount,
-            'total_waitlist_entries' => $totalWaitlistEntries,
+            'total_waitlist_entries' => $totalEmailEntries,
             'completion_rate' => $completionRate
         ]);
     }
