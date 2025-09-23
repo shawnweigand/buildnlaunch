@@ -12,13 +12,22 @@ class CheckoutController extends Controller
      */
     public function checkout(Request $request)
     {
-        $stripeProductId = $request->stripeProductId;
-        $stripePriceId   = $request->stripePriceId;
+        // Validate required parameters
+        $request->validate([
+            'stripeProductId' => 'required|string',
+            'stripePriceId' => 'required|string',
+        ]);
+
+        $stripeProductId = $request->input('stripeProductId');
+        $stripePriceId   = $request->input('stripePriceId');
+
+        // Get trial days from pricing config
+        $trialDays = config('pricing.trial_days', 5);
 
         return $request->user()
             ->newSubscription($stripeProductId, $stripePriceId) // Remove if not a subscription product
-            // ->trialDays(5)
-            // ->allowPromotionCodes()
+            ->trialDays($trialDays)
+            ->allowPromotionCodes()
             ->checkout([
                 'success_url' => route('checkout-success'),
                 'cancel_url' => route('checkout-cancel'),
@@ -38,6 +47,6 @@ class CheckoutController extends Controller
      */
     public function cancel()
     {
-        return Inertia::render('home');
+        return redirect()->route('home');
     }
 }

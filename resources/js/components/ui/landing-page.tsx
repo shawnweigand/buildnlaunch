@@ -1,6 +1,5 @@
-"use client"
-
-import { Link } from "@inertiajs/react"
+import { Link, router } from "@inertiajs/react"
+import { route } from "ziggy-js"
 import { motion } from "framer-motion"
 import {
   ArrowRight,
@@ -67,64 +66,35 @@ const itemFadeIn = {
   },
 }
 
-const demoPlans = [
-  {
-    name: "STARTER",
-    price: "50",
-    yearlyPrice: "40",
-    period: "per month",
-    features: [
-      "Up to 10 projects",
-      "Basic analytics",
-      "48-hour support response time",
-      "Limited API access",
-      "Community support",
-    ],
-    description: "Perfect for individuals and small projects",
-    buttonText: "Start Free Trial",
-    href: "/sign-up",
-    isPopular: false,
-  },
-  {
-    name: "PROFESSIONAL",
-    price: "99",
-    yearlyPrice: "79",
-    period: "per month",
-    features: [
-      "Unlimited projects",
-      "Advanced analytics",
-      "24-hour support response time",
-      "Full API access",
-      "Priority support",
-      "Team collaboration",
-      "Custom integrations",
-    ],
-    description: "Ideal for growing teams and businesses",
-    buttonText: "Get Started",
-    href: "/sign-up",
-    isPopular: true,
-  },
-  {
-    name: "ENTERPRISE",
-    price: "299",
-    yearlyPrice: "239",
-    period: "per month",
-    features: [
-      "Everything in Professional",
-      "Custom solutions",
-      "Dedicated account manager",
-      "1-hour support response time",
-      "SSO Authentication",
-      "Advanced security",
-      "Custom contracts",
-      "SLA agreement",
-    ],
-    description: "For large organizations with specific needs",
-    buttonText: "Contact Sales",
-    href: "/contact",
-    isPopular: false,
-  },
-];
+interface PricingPlan {
+  name: string
+  period: string
+  features: string[]
+  description: string
+  button_text: string
+  is_popular: boolean
+  stripe_product_id?: string
+  prices: {
+    monthly: {
+      price: string
+      stripe_price_id: string
+    }
+    yearly: {
+      price: string
+      stripe_price_id: string
+    }
+  }
+}
+
+interface Pricing {
+  plans: Record<string, PricingPlan>
+  currency: string
+  trial_days: number
+}
+
+interface DesignAgencyProps {
+  pricing: Pricing
+}
 
 const testimonials = [
   {
@@ -153,10 +123,24 @@ const testimonials = [
   }
 ];
 
-export function DesignAgency() {
+export function DesignAgency({ pricing }: DesignAgencyProps) {
   const [isMonthly, setIsMonthly] = useState(true);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const switchRef = useRef<HTMLButtonElement>(null);
+
+  // Convert pricing data to the format expected by the component
+  const plans = Object.values(pricing.plans).map(plan => ({
+    name: plan.name,
+    price: plan.prices.monthly.price,
+    yearlyPrice: plan.prices.yearly.price,
+    period: plan.period,
+    features: plan.features,
+    description: plan.description,
+    buttonText: plan.button_text,
+    isPopular: plan.is_popular,
+    stripeProductId: plan.stripe_product_id,
+    stripePriceIds: plan.prices,
+  }));
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
@@ -189,6 +173,15 @@ export function DesignAgency() {
 
   const handleSmoothScroll = (elementId: string) => {
     smoothScrollToElement(elementId, { duration: 0 });
+  };
+
+  const handleCheckout = (plan: any) => {
+    const stripePriceId = isMonthly
+      ? plan.stripePriceIds.monthly.stripe_price_id
+      : plan.stripePriceIds.yearly.stripe_price_id;
+    const stripeProductId = plan.stripeProductId;
+
+    window.location.href = route('checkout', {stripeProductId, stripePriceId});
   };
 
   return (
@@ -1039,7 +1032,7 @@ export function DesignAgency() {
               viewport={{ once: true }}
               className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-12"
             >
-              {demoPlans.map((plan, index) => (
+              {plans.map((plan, index) => (
                 <motion.div
                   key={index}
                   variants={itemFadeIn}
@@ -1113,8 +1106,8 @@ export function DesignAgency() {
 
                     <hr className="w-full my-4" />
 
-                    <Link
-                      href={plan.href}
+                    <button
+                      onClick={() => handleCheckout(plan)}
                       className={cn(
                         "inline-flex items-center justify-center rounded-3xl border px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
                         "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
@@ -1125,7 +1118,7 @@ export function DesignAgency() {
                       )}
                     >
                       {plan.buttonText}
-                    </Link>
+                    </button>
                     <p className="mt-6 text-xs leading-5 text-muted-foreground">
                       {plan.description}
                     </p>
