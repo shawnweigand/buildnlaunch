@@ -37,7 +37,7 @@ setup:
 ts:
 	php artisan typescript:transform
 
-# Run wh first to save wh secret in .env, then run stripe
+# Set real APP_URL, then run wh first to save wh secret in .env, then run stripe
 
 wh:
 	php artisan cashier:webhook
