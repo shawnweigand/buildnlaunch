@@ -77,5 +77,10 @@ Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('che
 //     return redirect('/dashboard');
 // });
 
+// For liveness probe
+Route::get('/healthz', function () {
+    return response()->json(['status' => 'healthy', 'code' => 200], 200);
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
