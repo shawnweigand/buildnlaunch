@@ -6,7 +6,6 @@ use App\Http\Requests\StoreWaitlistEmailRequest;
 use App\Http\Requests\StoreWaitlistSurveyRequest;
 use App\Models\Email;
 use App\Models\Waitlist;
-use App\Models\Quiz;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,7 +69,7 @@ class WaitlistController extends Controller
             'name' => $emailEntry->name,
             'is_existing' => $emailEntry->wasRecentlyCreated === false,
             'expects_json' => $request->expectsJson(),
-            'survey_config' => $surveyConfig
+            'survey_config' => $surveyConfig,
         ]);
 
         // Redirect to waitlist page with survey data in session
@@ -92,7 +91,7 @@ class WaitlistController extends Controller
         // Find the email entry
         $emailEntry = Email::where('email', $validated['email'])->first();
 
-        if (!$emailEntry) {
+        if (! $emailEntry) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found in waitlist.',
@@ -137,7 +136,7 @@ class WaitlistController extends Controller
                     'question_3' => $waitlistEntry->question_3,
                     'question_4' => $waitlistEntry->question_4,
                     'question_5' => $waitlistEntry->question_5,
-                ]
+                ],
             ]);
         }
 
@@ -154,7 +153,7 @@ class WaitlistController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'data' => $surveyConfig
+                'data' => $surveyConfig,
             ]);
         }
 
@@ -195,7 +194,7 @@ class WaitlistController extends Controller
                     $optionCounts[] = [
                         'name' => $optionLabel,
                         'value' => $count,
-                        'key' => $optionKey
+                        'key' => $optionKey,
                     ];
                 }
                 $questionResults = $optionCounts;
@@ -203,12 +202,12 @@ class WaitlistController extends Controller
                 // Count responses for each scale value
                 $scaleCounts = [];
                 for ($i = $questionData['min']; $i <= $questionData['max']; $i++) {
-                    $count = $completedSurveys->where("question_{$questionNumber}", (string)$i)->count();
+                    $count = $completedSurveys->where("question_{$questionNumber}", (string) $i)->count();
                     if ($count > 0) {
                         $scaleCounts[] = [
-                            'name' => (string)$i,
+                            'name' => (string) $i,
                             'value' => $count,
-                            'key' => (string)$i
+                            'key' => (string) $i,
                         ];
                     }
                 }
@@ -219,7 +218,7 @@ class WaitlistController extends Controller
                 'question' => $questionData['question'],
                 'type' => $questionData['type'],
                 'data' => $questionResults,
-                'total_responses' => $completedCount
+                'total_responses' => $completedCount,
             ];
         }
 
@@ -228,7 +227,7 @@ class WaitlistController extends Controller
             'data' => $results,
             'total_completed' => $completedCount,
             'total_waitlist_entries' => $totalEmailEntries,
-            'completion_rate' => $completionRate
+            'completion_rate' => $completionRate,
         ]);
     }
 }

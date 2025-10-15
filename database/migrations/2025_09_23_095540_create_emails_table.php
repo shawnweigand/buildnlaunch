@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->foreignId('waitlist_id')->nullable()->constrained('waitlist')->onDelete('cascade');
-            $table->foreignId('quiz_id')->nullable()->constrained('quiz')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
 

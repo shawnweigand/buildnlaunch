@@ -11,7 +11,6 @@ class Email extends Model
         'name',
         'email',
         'waitlist_id',
-        'quiz_id',
         'email_verified_at',
     ];
 
@@ -28,13 +27,5 @@ class Email extends Model
     public function waitlist(): BelongsTo
     {
         return $this->belongsTo(Waitlist::class);
-    }
-
-    /**
-     * Get the quiz entry associated with this email.
-     */
-    public function quiz(): BelongsTo
-    {
-        return $this->belongsTo(Quiz::class);
     }
 }
