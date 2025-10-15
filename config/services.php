@@ -55,4 +55,15 @@ return [
         'redirect' => 'http://example.com/callback-url',
     ],
 
+    'mailerlite' => [
+        'api_key' => env('MAILERLITE_API_KEY'),
+        'group_ids' => [
+            'groupnamefrommailerlite' => "groupidfrommailerlite"
+        ]
+    ],
+
+    'replicate' => [
+        'api_key' => env('REPLICATE_API_KEY'),
+    ],
+
 ];
