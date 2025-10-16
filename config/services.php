@@ -58,7 +58,8 @@ return [
     'mailerlite' => [
         'api_key' => env('MAILERLITE_API_KEY'),
         'group_ids' => [
-            'groupnamefrommailerlite' => "groupidfrommailerlite"
+            'waitlist' => "groupidfrommailerlite",
+            'users' => "groupidfrommailerlite"
         ]
     ],
 
