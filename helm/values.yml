@@ -1,0 +1,51 @@
+deployment:
+  replicas: 1
+  image:
+    repository: shawnweigand/prod
+    tag: buildnlaunch
+  probes:
+    enabled: false
+  registry:
+    imagePullSecret: docker-registry-secret
+
+serviceAccount:
+  name: docker-registry-serviceaccount
+  imagePullSecret: docker-registry-secret
+
+ingress:
+  host: buildnlaunch.com
+  tls: true
+  externalPort: 80
+  internalPort: 8080
+
+issuer:
+  email: weigandshawn@gmail.com
+  server: https://acme-v02.api.letsencrypt.org/directory
+
+pdb:
+  minAvailable: 1
+
+horizon:
+  enabled: false
+  replicas: 1
+
+redis:
+  enabled: false
+
+config:
+  APP_NAME: BuildnLaunch
+  VITE_APP_NAME: BuildnLaunch
+  APP_URL: https://buildnlaunch.com
+  APP_ENV: production
+  WORKOS_REDIRECT_URL: https://buildnlaunch.com/authenticate
+  DB_CONNECTION: sqlsrv
+  DB_PORT: 1433
+  DB_TRUST_SERVER_CERTIFICATE: true
+  # SESSION_DRIVER: redis
+  # QUEUE_CONNECTION: redis
+  # CACHE_STORE: redis
+  # REDIS_CLIENT: phpredis
+  # REDIS_HOST: buildnlaunch-redis
+  # REDIS_PASSWORD: null
+  # REDIS_PORT: 6379
+  # SPACES_USE_PATH_STYLE_ENDPOINT: false
