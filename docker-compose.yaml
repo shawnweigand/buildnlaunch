@@ -26,43 +26,57 @@ services:
     volumes:
       - ".:/var/www/html/"
     #   - "./opt/certs/:/etc/ssl/private/"
-
     networks:
       - buildnlaunch_app
     depends_on:
-      - vite
-      # - pgsql
+      - mssql
       # - redis
+      # - pgsql
 
   vite:
     container_name: buildnlaunch_vite
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: buildnlaunch
+    image: node:22-bookworm
     environment:
       NODE_ENV: local
-    working_dir: /var/www/html/
+    working_dir: /var/www/html
     command: npm run dev
     volumes:
-      - ".:/var/www/html/:cached"
+      - .:/var/www/html:cached
     ports:
       - "5173:5173"
     networks:
       - buildnlaunch_app
+    depends_on:
+      - app
 
-  pgsql:
-    container_name: buildnlaunch_pgsql
-    image: postgres:17
+  # pgsql:
+  #   container_name: buildnlaunch_pgsql
+  #   image: postgres:17
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: buildnlaunch
+  #   volumes:
+  #     - buildnlaunch_pgsql_data:/var/lib/pgsql/data
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - buildnlaunch_app
+
+  mssql:
+    container_name: buildnlaunch_mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: buildnlaunch
-    volumes:
-      - buildnlaunch_pgsql_data:/var/lib/pgsql/data
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Developer"
     ports:
-      - "5432:5432"
+      - "1433:1433"
+    volumes:
+      - buildnlaunch_mssql_data:/var/opt/mssql
     networks:
       - buildnlaunch_app
 
@@ -77,10 +91,27 @@ services:
   #   volumes:
   #       - buildnlaunch_redis_data:/data
 
+  # horizon:
+  #   container_name: buildnlaunch_horizon
+  #   image: buildnlaunch
+  #   working_dir: /var/www/html/
+  #   command: php artisan horizon
+  #   volumes:
+  #     - ".:/var/www/html/"
+  #   networks:
+  #     - buildnlaunch_app
+  #   depends_on:
+  #     # - pgsql
+  #     - mssql
+  #     - redis
+  #     - app
+  #   restart: unless-stopped
+
 networks:
   buildnlaunch_app:
     driver: bridge
 
 volumes:
-  buildnlaunch_pgsql_data:
+  # buildnlaunch_pgsql_data:
+  buildnlaunch_mssql_data:
   # buildnlaunch_redis_data:
