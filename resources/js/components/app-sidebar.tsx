@@ -5,43 +5,43 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, BarChart3 } from 'lucide-react';
+import { LayoutGrid, BarChart3, Gem } from 'lucide-react';
 import AppLogo from './app-logo';
+import { route } from 'ziggy-js';
+import { useMemo } from 'react';
 
-const footerNavItems: NavItem[] = [
+const mainNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Dashboard',
+        href: dashboard(),
+        icon: LayoutGrid,
     },
+];
+
+const defaultFooterNavItems: NavItem[] = [
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+        title: 'Plans',
+        href: route('plans'),
+        icon: Gem,
+    }
 ];
 
 export function AppSidebar() {
     const page = usePage<SharedData>();
     const isAuthorized = page.props.auth?.isAuthorized;
+    const footerNavItems = useMemo(() => {
+        const items = [...defaultFooterNavItems];
 
-    // Build navigation items dynamically
-    const mainNavItems: NavItem[] = [
-        {
-            title: 'Dashboard',
-            href: dashboard(),
-            icon: LayoutGrid,
-        },
-    ];
+        if (isAuthorized) {
+            items.push({
+                title: 'Survey Results',
+                href: '/results',
+                icon: BarChart3,
+            });
+        }
 
-    // Only add Survey Results if user is authorized
-    if (isAuthorized) {
-        mainNavItems.push({
-            title: 'Survey Results',
-            href: '/results',
-            icon: BarChart3,
-        });
-    }
+        return items;
+    }, [isAuthorized]);
 
     return (
         <Sidebar collapsible="icon" variant="inset">

@@ -31,9 +31,27 @@ Route::middleware([
     'auth',
     ValidateSessionWithWorkOS::class,
 ])->group(function () {
+
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::get('plans', function () {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $subscription = $user->subscriptions()
+            ->active()
+            ->first();
+
+        return Inertia::render('plans', [
+            'pricing' => config('pricing'),
+            'stripe_product_id' => $subscription?->type,
+            'trial_ends_at' => optional($subscription?->trial_ends_at)->toIso8601String(),
+            'ends_at' => optional($subscription?->ends_at)->toIso8601String(),
+        ]);
+    })->name('plans');
+
 });
 
 // Results page - only accessible by authorized emails
@@ -49,7 +67,7 @@ Route::middleware([
 // Cashier [https://laravel.com/docs/12.x/billing#quickstart-selling-products] -> for quantity products
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout-success');
-Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout-cancel');
+Route::post('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout-cancel');
 
 // Socialite [https://laravel.com/docs/12.x/socialite#routing]
 // Other providers: https://socialiteproviders.com/
