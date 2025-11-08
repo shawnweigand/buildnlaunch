@@ -12,23 +12,28 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search, BarChart3 } from 'lucide-react';
+import { LayoutGrid, Menu, Search, BarChart3, Gem } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import { route } from 'ziggy-js';
+import { useMemo } from 'react';
 
 // Navigation items will be built dynamically based on user authorization
 
-const rightNavItems: NavItem[] = [
+const mainNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Dashboard',
+        href: dashboard(),
+        icon: LayoutGrid,
     },
+];
+
+const defaultRightNavItems: NavItem[] = [
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+        title: 'Plans',
+        href: route('plans'),
+        icon: Gem,
+    }
 ];
 
 const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -40,24 +45,19 @@ interface AppHeaderProps {
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const isAuthorized = page.props.auth?.isAuthorized;
+    const rightNavItems = useMemo(() => {
+        const items = [...defaultRightNavItems];
 
-    // Build navigation items dynamically
-    const mainNavItems: NavItem[] = [
-        {
-            title: 'Dashboard',
-            href: dashboard(),
-            icon: LayoutGrid,
-        },
-    ];
+        if (isAuthorized) {
+            items.push({
+                title: 'Survey Results',
+                href: '/results',
+                icon: BarChart3,
+            });
+        }
 
-    // Only add Survey Results if user is authorized
-    if (isAuthorized) {
-        mainNavItems.push({
-            title: 'Survey Results',
-            href: '/results',
-            icon: BarChart3,
-        });
-    }
+        return items;
+    }, [isAuthorized]);
     const { auth } = page.props;
     const getInitials = useInitials();
     return (
@@ -93,7 +93,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                 <a
                                                     key={item.title}
                                                     href={typeof item.href === 'string' ? item.href : item.href.url}
-                                                    target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center space-x-2 font-medium"
                                                 >

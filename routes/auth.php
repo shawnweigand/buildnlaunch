@@ -17,7 +17,8 @@ Route::get('authenticate', function (AuthKitAuthenticationRequest $request) {
             CreateSubscriber::run($user->email, ['name' => $user->name], [config('services.mailerlite.group_ids.users')]);
         }
     };
-    return tap(to_route('kitchen'), $authenticate);
+
+    return tap(to_route('dashboard'), $authenticate);
 })->middleware(['guest']);
 
 Route::post('logout', function (AuthKitLogoutRequest $request) {
