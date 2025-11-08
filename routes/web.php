@@ -67,7 +67,7 @@ Route::middleware([
 // Cashier [https://laravel.com/docs/12.x/billing#quickstart-selling-products] -> for quantity products
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout-success');
-Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout-cancel');
+Route::post('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout-cancel');
 
 // Socialite [https://laravel.com/docs/12.x/socialite#routing]
 // Other providers: https://socialiteproviders.com/

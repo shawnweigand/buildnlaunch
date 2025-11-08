@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useRef, useState } from 'react'
-import { Head } from '@inertiajs/react'
+import { Head, Link } from '@inertiajs/react'
 import { motion } from 'framer-motion'
 import { Check, Star } from 'lucide-react'
 import { route } from 'ziggy-js'
@@ -204,9 +204,9 @@ export default function Plans({ pricing, stripe_product_id, trial_ends_at, ends_
 
                 <section className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
                     {plans.map((plan, index) => {
-                        const isCurrentPlan = activeStripeProductId === plan.stripeProductId
-                        const isPlanDisabled = isSelectionLocked && !isCurrentPlan
-                        const isButtonDisabled = isPlanDisabled || isCurrentPlan
+        const isCurrentPlan = activeStripeProductId === plan.stripeProductId
+        const isPlanDisabled = isSelectionLocked && !isCurrentPlan
+        const isButtonDisabled = isPlanDisabled
 
                         return (
                             <motion.div
@@ -215,7 +215,7 @@ export default function Plans({ pricing, stripe_product_id, trial_ends_at, ends_
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                                whileHover={isButtonDisabled ? undefined : { y: plan.isPopular ? -12 : -6 }}
+        whileHover={isButtonDisabled ? undefined : { y: plan.isPopular ? -12 : -6 }}
                                 className={cn(
                                     'relative flex h-full flex-col gap-5 rounded-2xl border p-6 shadow-sm transition-all duration-300 ease-out',
                                     plan.isPopular && !isCurrentPlan
@@ -284,32 +284,52 @@ export default function Plans({ pricing, stripe_product_id, trial_ends_at, ends_
                                     </div>
                                 )}
 
-                                <button
-                                    type='button'
-                                    onClick={() => {
-                                        if (isButtonDisabled) {
-                                            return
-                                        }
+        {isCurrentPlan && !formattedEndsAt ? (
+            <Link
+                as='button'
+                method='post'
+                href={route('checkout-cancel')}
+                data={{
+                    stripeProductId: plan.stripeProductId,
+                }}
+                className={cn(
+                    buttonVariants({
+                        variant: 'destructive',
+                        size: 'lg',
+                    }),
+                    'group relative w-full gap-2 overflow-hidden text-base font-semibold tracking-tight transition-all duration-300 ease-out',
+                    'transform-gpu ring-offset-current hover:ring-2 hover:ring-destructive/80 hover:ring-offset-1',
+                )}
+            >
+                Cancel subscription
+            </Link>
+        ) : !isCurrentPlan ? (
+            <button
+                type='button'
+                onClick={() => {
+                    if (isButtonDisabled) {
+                        return
+                    }
 
-                                        handleCheckout(plan)
-                                    }}
-                                    disabled={isButtonDisabled}
-                                    aria-disabled={isButtonDisabled}
-                                    className={cn(
-                                        buttonVariants({
-                                            variant: isCurrentPlan || (plan.isPopular && !isPlanDisabled) ? 'default' : 'outline',
-                                            size: 'lg',
-                                        }),
-                                        'group relative w-full gap-2 overflow-hidden text-base font-semibold tracking-tight transition-all duration-300 ease-out',
-                                        'transform-gpu ring-offset-current',
-                                        !isButtonDisabled && 'hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground',
-                                        isCurrentPlan && 'bg-primary text-primary-foreground',
-                                        !isCurrentPlan && !(plan.isPopular && !isPlanDisabled) && 'border-border bg-background text-foreground hover:bg-muted',
-                                        isButtonDisabled && 'cursor-not-allowed opacity-75',
-                                    )}
-                                >
-                                    {isCurrentPlan ? 'Current plan' : plan.buttonText}
-                                </button>
+                    handleCheckout(plan)
+                }}
+                disabled={isButtonDisabled}
+                aria-disabled={isButtonDisabled}
+                className={cn(
+                    buttonVariants({
+                        variant: plan.isPopular && !isPlanDisabled ? 'default' : 'outline',
+                        size: 'lg',
+                    }),
+                    'group relative w-full gap-2 overflow-hidden text-base font-semibold tracking-tight transition-all duration-300 ease-out',
+                    'transform-gpu ring-offset-current',
+                    !isButtonDisabled && 'hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground',
+                    !(plan.isPopular && !isPlanDisabled) && 'border-border bg-background text-foreground hover:bg-muted',
+                    isButtonDisabled && 'cursor-not-allowed opacity-75',
+                )}
+            >
+                {plan.buttonText}
+            </button>
+        ) : null}
                             </motion.div>
                         )
                     })}

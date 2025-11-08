@@ -67,19 +67,10 @@ class CheckoutController extends Controller
     /**
      * Cancel
      */
-    public function cancel()
-    {
-        return redirect()->route('dashboard');
-    }
-
-    /**
-     * Cancel Subscription
-     */
-    public function cancelSubscription(Request $request)
+    public function cancel(Request $request)
     {
         $request->validate([
             'stripeProductId' => 'required|string',
-            'stripePriceId' => 'required|string',
         ]);
 
         $request->user()->subscription($request->stripeProductId)->cancel();
