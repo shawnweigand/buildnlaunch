@@ -75,6 +75,6 @@ class CheckoutController extends Controller
 
         $request->user()->subscription($request->stripeProductId)->cancel();
 
-        return redirect()->route('dashboard')->with('message', 'Subscription cancelled successfully');
+        return redirect()->route('dashboard')->with('success', 'Subscription cancelled successfully');
     }
 }
